@@ -1,0 +1,13 @@
+{
+    "name": "puzzle-dragon-master-js",
+    "scripts": {
+        "debug" : "node app.js debug",
+        "dev" : "node app.js debug"
+    },
+    "description": " node.js version",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "express": "latest"
+    }
+}
