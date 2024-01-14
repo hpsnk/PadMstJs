@@ -235,7 +235,7 @@ function filterByAwakenSkill(params, inList) {
 // コラボ
 function filterByCollabo(params, inList) {
     // 検索条件にコラボが存在しない場合
-    if (params['collabo'] == undefined) {
+    if (params['collabo'] == undefined || params['collabo'] == '') {
         return inList;
     }
 

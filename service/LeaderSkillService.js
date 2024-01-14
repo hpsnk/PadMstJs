@@ -74,21 +74,25 @@ function filterByLeaderSkillCategory(params, inList) {
     logger.trace("[LeaderSkillService.js][filterByLeaderSkillCategory]start.");
 
     let outList = [];
+    let searchLSTypes = ArrayUtils.toNumberArray(params['leaderSkillCategory']);
+    logger.debug(searchLSTypes);
 
     for (let i = 0; i < inList.length; i++) {
         let lsTypes = inList[i].types;
-        let searchLSTypes = ArrayUtils.toNumberArray(params['leaderSkillCategory']);
+
         // 検索条件 and/or
         if (StringUtils.equals(params['leaderSkillCategoryCondAnd'], 'true')) {
             // logger.debug("  search by and");
             // リーダースキルカテゴリ, and
             if (ArrayUtils.containsAll(lsTypes, searchLSTypes)) {
+                logger.debug(lsTypes + " contains " + searchLSTypes);
                 outList.push(inList[i]);
             }
         } else {
             // logger.debug("  search by or");
             // リーダースキルカテゴリ, or
             if (ArrayUtils.containsAny(lsTypes, searchLSTypes)) {
+                logger.debug(lsTypes + " contains " + searchLSTypes);
                 outList.push(inList[i]);
             }
         }

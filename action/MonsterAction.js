@@ -48,6 +48,12 @@ exports.search = function (req, res) {
   let objSubArray = DatatablesUtils.subArray(filteredMonsterList, params);
   logger.debug("  monster size:" + objSubArray.data.length);
 
+  // fill skill
+  MonsterService.fillSkillInfo(objSubArray['data']);
+
+  // fill leaderskill
+  MonsterService.fillLeaderSkillInfo(objSubArray['data']);
+  
   let resObj = {
     'data': objSubArray.data,
     'draw': params['draw'],

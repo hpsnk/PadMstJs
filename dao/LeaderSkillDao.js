@@ -2,7 +2,6 @@
 // LeaderSkillDao.js
 // cache(list, map)
 //----------------------------------------------------
-
 const fs = require('fs');
 const logger = require('../util/Logger');
 const CONFIG = require('../config');

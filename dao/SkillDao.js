@@ -2,15 +2,12 @@
 // SkillDao.js
 // cache(list, map)
 //----------------------------------------------------
+const fs = require('fs');
+const logger = require('../util/Logger');
+const CONFIG = require('../config');
 
 let cacheList = [];
 let cacheMap = new Map();
-
-const fs = require('fs');
-
-const logger = require('../util/Logger');
-
-const TARGET_FILE = './json/skill.json';
 
 exports.getById = function (nSkillId) {
     logger.trace("[SkillDao.js][getById]start.");
@@ -32,7 +29,7 @@ exports.load = function () {
     }
 
     //read file
-    let strSkill = fs.readFileSync(TARGET_FILE);
+    let strSkill = fs.readFileSync(CONFIG.DATA_FILES.SKILL);
 
     // string -> json に変更
     let objSkill = JSON.parse(strSkill);

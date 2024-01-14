@@ -2,14 +2,12 @@
 // LeaderSkillCategoryDao.js
 // cache
 //----------------------------------------------------
+const fs = require('fs');
+const logger = require('../util/Logger');
+const CONFIG = require('../config');
 
 var cacheList = [];
 var cacheMap = new Map();
-
-const fs = require('fs');
-const logger = require('../util/Logger');
-
-const TARGET_FILE = './json/leaderskillcategory.json';
 
 exports.load = function () {
     logger.trace("[LeaderSkillCategoryDao.js][load]start.");
@@ -19,18 +17,26 @@ exports.load = function () {
     }
 
     //read file
-    let strLeaderSkillCategory = fs.readFileSync(TARGET_FILE);
+    let strLeaderSkillCategory = fs.readFileSync(CONFIG.DATA_FILES.LEADER_SKILL_CATEGORY);
 
     // string -> json に変更
     let objLeaderSkillCategory = JSON.parse(strLeaderSkillCategory);
 
-    for (let i = 0; i < objLeaderSkillCategory.length; i++) {
+    objLeaderSkillCategory.forEach(element => {
         // listに追加
-        cacheList.push(objLeaderSkillCategory[i]);
+        cacheList.push(element);
 
         // mapに追加
-        cacheMap.set(objLeaderSkillCategory[i]['leaderskillType'], objLeaderSkillCategory[i]);
-    }
+        cacheMap.set(element.leaderskillType, element);
+    });
+
+    // for (let i = 0; i < objLeaderSkillCategory.length; i++) {
+    //     // listに追加
+    //     cacheList.push(objLeaderSkillCategory[i]);
+
+    //     // mapに追加
+    //     cacheMap.set(objLeaderSkillCategory[i]['leaderskillType'], objLeaderSkillCategory[i]);
+    // }
 
     return objLeaderSkillCategory;
 }
