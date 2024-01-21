@@ -30,6 +30,7 @@ const PORT = process.env.PORT || CONFIG.SERVER_PORT
 //--action
 const SkillAction = require('./action/SkillAction');
 const MonsterAction = require('./action/MonsterAction');
+const MonsterAttrAction = require('./action/MonsterAttrAction');
 const MonsterTypeAction = require('./action/MonsterTypeAction');
 const AwakenSkillAction = require('./action/AwakenskillAction');
 const TeamAction = require('./action/TeamAction');
@@ -81,6 +82,12 @@ app.get('/padmst/collabo/list', function (req, res) {
   CollaboAction.list(req, res);
 });
 
+//--OK--MonsterAttr--------------------
+app.get('/padmst/attr/list', function (req, res) {
+  logger.trace("[app.js]attr/list");
+
+  MonsterAttrAction.list(req, res);
+});
 
 
 //--monster-----------------------

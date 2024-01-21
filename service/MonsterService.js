@@ -38,6 +38,9 @@ exports.filter = function (params, monsterList) {
     // サブ属性
     filteredMonsterList = filterBySubAttr(params, filteredMonsterList);
 
+    // 第三属性
+    filteredMonsterList = filterByThirdAttr(params, filteredMonsterList);
+
     // タイプ
     filteredMonsterList = filterByType(params, filteredMonsterList);
 
@@ -108,21 +111,21 @@ function filterByFreeword(params, inList) {
 // メイン属性
 // 主属性
 function filterByMainAttr(params, inList) {
+    let paramMainAttr = params['mainAttr'];
+
     // 検索条件に主属性が存在しない場合
-    if (params['mainAttr[]'] == undefined) {
+    if (paramMainAttr == undefined) {
         return inList;
     }
+    
+    logger.debug("[MonsterService.js][filterByMainAttr]start.");
 
-    let outList = [];
-
-    for (let i = 0; i < inList.length; i++) {
-        let monsterMainAttr = [inList[i].attr];
-        let searchMainAttrs = ArrayUtils.toNumberArray(params['mainAttr[]']);
-
-        if (ArrayUtils.containsAny(monsterMainAttr, searchMainAttrs)) {
-            outList.push(inList[i]);
-        }
-    }
+    let outList = inList.filter(monster => {
+        let monsterMainAttr = [monster.attr];
+        let searchMainAttrs = ArrayUtils.toNumberArray(paramMainAttr);
+        return ArrayUtils.containsAny(monsterMainAttr, searchMainAttrs);
+    });
+    logger.debug('  out.size=' + outList.length);
 
     return outList;
 }
@@ -130,24 +133,46 @@ function filterByMainAttr(params, inList) {
 // サブ属性
 // 副属性
 function filterBySubAttr(params, inList) {
+    let paramSubAttr = params['subAttr'];
+
     // 検索条件にサブ属性が存在しない場合
-    if (params['subAttr[]'] == undefined) {
+    if (paramSubAttr == undefined) {
         return inList;
     }
+    
+    logger.debug("[MonsterService.js][filterBySubAttr]start.");
 
-    let outList = [];
-
-    for (let i = 0; i < inList.length; i++) {
-        let monsterSubAttr = [inList[i].subAttr];
-        let searchMainAttrs = ArrayUtils.toNumberArray(params['subAttr[]']);
-
-        if (ArrayUtils.containsAny(monsterSubAttr, searchMainAttrs)) {
-            outList.push(inList[i]);
-        }
-    }
+    let outList = inList.filter(monster => {
+        let monsterSubAttr = [monster.subAttr];
+        let searchSubAttrs = ArrayUtils.toNumberArray(paramSubAttr);
+        return ArrayUtils.containsAny(monsterSubAttr, searchSubAttrs);
+    });
+    logger.debug('  out.size=' + outList.length);
 
     return outList;
 }
+
+// 第三属性
+function filterByThirdAttr(params, inList) {
+    let paramThirdAttr = params['thirdAttr'];
+
+    // 検索条件に第三属性が存在しない場合
+    if (paramThirdAttr == undefined) {
+        return inList;
+    }
+    
+    logger.debug("[MonsterService.js][filterByThirdAttr]start.");
+
+    let outList = inList.filter(monster => {
+        let monsterThirdAttr = [monster.thirdAttr];
+        let searchThirdAttrs = ArrayUtils.toNumberArray(paramThirdAttr);
+        return ArrayUtils.containsAny(monsterThirdAttr, searchThirdAttrs);
+    });
+    logger.debug('  out.size=' + outList.length);
+
+    return outList;
+}
+
 
 // タイプ
 function filterByType(params, inList) {

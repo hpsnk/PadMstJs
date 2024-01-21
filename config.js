@@ -15,6 +15,7 @@ exports.DATA_FILES = {
     LEADER_SKILL:          EVN_JSON_DIR + '/leaderskill.json',
     LEADER_SKILL_CATEGORY: EVN_JSON_DIR + '/leaderskillcategory.json',
     MONSTER:               EVN_JSON_DIR + '/monster.json',
+    MONSTER_ATTR:          EVN_JSON_DIR + '/attr.json',
     MONSTER_TYPE:          EVN_JSON_DIR + '/monster_type.json',
     SKILL:                 EVN_JSON_DIR + '/skill.json',
     SKILL_CATEGORY:        EVN_JSON_DIR + '/skillcategory.json',
