@@ -2,13 +2,22 @@
 // PadMstJs
 // app.js
 //----------------------------------------------------
-
-// logger
 const logger = require('./util/Logger');
+
 // set log level
 let execArgs = process.argv;
-if (execArgs.length > 2 && execArgs[2] == 'debug') {
-  logger.setLevel(logger.LV_TRACE);
+if (execArgs.length > 2) {
+  let logLevel = execArgs[2].toLowerCase();
+
+  if (logLevel === 'debug') {
+    logger.setLevel(logger.LV_DEBUG);
+  } else if (logLevel === 'trace') {
+    logger.setLevel(logger.LV_TRACE);
+  } else {
+    logger.setLevel(logger.LV_INFO);
+  }
+} else {
+  logger.setLevel(logger.LV_INFO);
 }
 
 //
