@@ -106,6 +106,18 @@ app.get('/padmst/monster/list', function (req, res) {
   MonsterAction.search(req, res);
 });
 
+//--type--------------------------
+app.get('/padmst/type/list', function (req, res) {
+  logger.trace("[app.js]request type/list");
+
+  MonsterTypeAction.list(req, res);
+});
+
+
+
+//-----------------------------------------------------------------
+// 以下、古い
+//-----------------------------------------------------------------
 
 
 //--skill-------------------------

@@ -2,14 +2,12 @@
 // MonsterTypeDao.js
 // cache
 //----------------------------------------------------
+const fs = require('fs');
+const logger = require('../util/Logger');
+const Config = require('../config');
 
 var cacheList = [];
 var cacheMap = new Map();
-
-const fs = require('fs');
-const logger = require('../util/Logger');
-
-const TARGET_FILE = './json/monster_type.json';
 
 exports.load = function () {
     logger.trace("[MonsterTypeDao.js][load]start.");
@@ -19,7 +17,7 @@ exports.load = function () {
     }
 
     //read file
-    let strType = fs.readFileSync(TARGET_FILE);
+    let strType = fs.readFileSync(Config.DATA_FILES.MONSTER_TYPE);
 
     // string -> json に変更
     let objType = JSON.parse(strType);
