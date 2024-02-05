@@ -176,8 +176,10 @@ function filterByThirdAttr(params, inList) {
 
 // タイプ
 function filterByType(params, inList) {
+    let inType = params['type'];
+
     // 検索条件にタイプが存在しない場合
-    if (params['type[]'] == undefined) {
+    if (inType == undefined) {
         return inList;
     }
 
@@ -198,7 +200,7 @@ function filterByType(params, inList) {
         if (testMonster.extraTypeId != -1) {
             monsterType.push(testMonster.extraTypeId);
         }
-        let searchTypeArray = ArrayUtils.toNumberArray(params['type[]']);
+        let searchTypeArray = ArrayUtils.toNumberArray(inType);
         // and/or
         if (params['typeCondAnd'] != undefined && params['typeCondAnd'] == 'true') {
             // type, and
