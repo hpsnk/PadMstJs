@@ -220,8 +220,10 @@ function filterByType(params, inList) {
 
 // 覚醒スキル
 function filterByAwakenSkill(params, inList) {
+    let inAwakenSkill = params['awakenSkill'];
+
     // 検索条件に覚醒スキルが存在しない場合
-    if (params['awakenSkill[]'] == undefined) {
+    if (inAwakenSkill == undefined) {
         return inList;
     }
 
@@ -229,7 +231,7 @@ function filterByAwakenSkill(params, inList) {
 
     for (let i = 0; i < inList.length; i++) {
         let monsterAwakenSkill = inList[i].awakenskillIds;
-        let searchAwakenSkillArray = ArrayUtils.toNumberArray(params['awakenSkill[]']);
+        let searchAwakenSkillArray = ArrayUtils.toNumberArray(inAwakenSkill);
 
         if (params['awakenSkillSortByCount'] == 'true' && ArrayUtils.containsAll(monsterAwakenSkill, searchAwakenSkillArray)) {
             // 覚醒スキル 多い順の場合
