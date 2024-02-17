@@ -41,6 +41,9 @@ exports.filter = function (params, monsterList) {
     // 第三属性
     filteredMonsterList = filterByThirdAttr(params, filteredMonsterList);
 
+    // レア
+    filteredMonsterList = filterByRare(params, filteredMonsterList);
+
     // タイプ
     filteredMonsterList = filterByType(params, filteredMonsterList);
 
@@ -173,6 +176,24 @@ function filterByThirdAttr(params, inList) {
     return outList;
 }
 
+// レア
+function filterByRare(params, inList) {
+    let paramRare = params['rare'];
+
+    // 検索条件に レア が存在しない場合
+    if (paramRare == undefined) {
+        return inList;
+    }
+    
+    logger.debug("[MonsterService.js][filterByRare]start.");
+
+    let outList = inList.filter(monster => {
+        return paramRare == monster.rare;
+    });
+    logger.debug('  out.size=' + outList.length);
+
+    return outList;
+}
 
 // タイプ
 function filterByType(params, inList) {
