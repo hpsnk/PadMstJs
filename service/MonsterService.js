@@ -406,8 +406,11 @@ exports.fillSkillInfo = function (inList) {
         let nSkillId = element.skillId;
         // スキル取得
         let objSkill = SkillDao.getById(nSkillId);
-        // スキルターン算出
-        element.skill.turn = objSkill.initTurn - objSkill.maxLv + 1;
+
+        if (objSkill != undefined && objSkill.initTurn != 0 && objSkill.maxLv != 0) {
+            // スキルターン算出
+            objSkill.turn = objSkill.initTurn - objSkill.maxLv + 1;
+        }
 
         element.skill = objSkill;
     });
