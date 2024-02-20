@@ -401,14 +401,16 @@ exports.getTeamMonsterInfo = function (objTeamIn) {
 exports.fillSkillInfo = function (inList) {
     logger.trace("[MonsterService.js][fillSkillInfo]start.");
 
-    for (let i = 0; i < inList.length; i++) {
-
-        let nSkillId = inList[i]['skillId'];
-
+    inList.forEach(element => {
+        // スキルID
+        let nSkillId = element.skillId;
+        // スキル取得
         let objSkill = SkillDao.getById(nSkillId);
+        // スキルターン算出
+        element.skill.turn = objSkill.initTurn - objSkill.maxLv + 1;
 
-        inList[i]['skill'] = objSkill;
-    }
+        element.skill = objSkill;
+    });
 }
 
 
