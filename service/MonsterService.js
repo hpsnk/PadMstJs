@@ -59,6 +59,12 @@ exports.filter = function (params, monsterList) {
     // スキルターン
     filteredMonsterList = filterBySkillTurn(params, filteredMonsterList);
 
+    // スキル freeword
+    filteredMonsterList = filterBySkillFreeword(params, filteredMonsterList);
+
+    // リーダースキル freeword
+    filteredMonsterList = filterByLeaderskillFreeword(params, filteredMonsterList);
+
     return filteredMonsterList;
 }
 
@@ -349,6 +355,66 @@ function filterBySkillTurn(params, inList) {
     }
 
     logger.debug("  return path b");
+    return outList;
+}
+
+// スキル freeword
+function filterBySkillFreeword(params, inList) {
+    logger.trace("[MonsterService.js][filterBySkillFreeword]check.");
+
+    let inSkillFreeword = params['skillFreeword'];
+    // 検索条件に スキル freeword が存在しない場合
+    if (inSkillFreeword == undefined) {
+        return inList;
+    }
+
+    logger.trace("[MonsterService.js][filterBySkillFreeword]start.");
+    
+    // 
+    module.exports.fillSkillInfo(inList);
+
+    let outList = inList.filter(monster => {
+        if (monster.skill == undefined) {
+            return false;
+        }
+
+        isMatched = false;
+
+        if (monster.skill.gameDesc.match(inSkillFreeword) != null) {
+            isMatched =  true;
+        }
+        return isMatched;
+    });
+
+    return outList;
+}
+
+// リーダースキル freeword
+function filterByLeaderskillFreeword(params, inList) {
+    let inLeaderskillFreeword = params['leaderskillFreeword'];
+    // 検索条件に リーダースキル freeword が存在しない場合
+    if (inLeaderskillFreeword == undefined) {
+        return inList;
+    }
+
+    logger.trace("[MonsterService.js][filterByLeaderskillFreeword]start.");
+
+    //
+    module.exports.fillLeaderSkillInfo(inList);
+
+    let outList = inList.filter(monster => {
+        if (monster.leaderskill == undefined) {
+            return false;
+        }
+
+        isMatched = false;
+
+        if (monster.leaderskill.gameDesc.match(inLeaderskillFreeword) != null) {
+            isMatched =  true;
+        }
+        return isMatched;
+    });
+
     return outList;
 }
 
