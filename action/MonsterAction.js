@@ -44,8 +44,11 @@ exports.search = function (req, res) {
   let filteredMonsterList = MonsterService.filter(params, monsterList);
   logger.debug("  monster size:" + filteredMonsterList.length);
 
+  // sort
+  let sortedMonsterList = MonsterService.sort(params, filteredMonsterList);
+
   // subArray
-  let objSubArray = DatatablesUtils.subArray(filteredMonsterList, params);
+  let objSubArray = DatatablesUtils.subArray(sortedMonsterList, params);
   logger.debug("  monster size:" + objSubArray.data.length);
 
   // fill skill

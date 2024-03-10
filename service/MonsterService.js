@@ -72,15 +72,16 @@ exports.sort = function (params, monsterList) {
     logger.trace("[MonsterService.js][sort]start.");
 
     // 検索条件に覚醒スキルが存在しない場合
-    if (params['awakenSkill[]'] != undefined && params['awakenSkillSortByCount'] == 'true') {
-        logger.warn("  多い順でソートする");
+    if (params['awakenSkill'] != undefined && params['awakenSkillSortByCount'] == 'true') {
+        logger.debug("覚醒スキル 多い順");
 
         monsterList.sort(function (a, b) {
             return b.sortByCount - a.sortByCount;
         });
-    } else {
-        logger.warn("  多い順でソートしない");
     }
+    // else {
+    //     logger.warn("  多い順でソートしない");
+    // }
 
     return monsterList;
 }
