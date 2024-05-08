@@ -19,6 +19,7 @@ exports.DATA_FILES = {
     MONSTER_TYPE:          EVN_JSON_DIR + '/monster_type.json',
     SKILL:                 EVN_JSON_DIR + '/skill.json',
     SKILL_CATEGORY:        EVN_JSON_DIR + '/skillcategory.json',
+    SKILL_TAG:             EVN_JSON_DIR + '/skill_tag.json',
     SUPER_AWAKEN_SKILL:    EVN_JSON_DIR + '/superawakenskill.json',
     TEAM: './json_customer/team.json',
 }

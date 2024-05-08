@@ -113,6 +113,12 @@ app.get('/padmst/type/list', function (req, res) {
   MonsterTypeAction.list(req, res);
 });
 
+//--skill tag---------------------
+app.get('/padmst/skill/listTag', function (req, res) {
+  logger.trace("[app.js]request skill/listTag");
+
+  SkillAction.listSkillTag(req, res);
+});
 
 
 //-----------------------------------------------------------------

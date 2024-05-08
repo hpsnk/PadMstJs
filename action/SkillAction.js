@@ -29,3 +29,18 @@ exports.search = function (req, res) {
 
   ActionUtils.doResponse(params, res, JSON.stringify(objSubArray));
 }
+
+exports.listSkillTag = function (req, res) {
+  logger.trace("[SkillAction.js][listSkillTag]start.");
+
+  //logger.debug("req.header=" + req.header('Origin'));
+  // logger.debug("req=" + JSON.stringify(JSON.parse(JSON.stringify(req))));
+
+  // 解析 url 参数
+  let params = ActionUtils.analyzeParam(req);
+
+  // skillTag一覧取得
+  let skillList = SkillService.listSkillTag(params);
+
+  ActionUtils.doResponse(params, res, JSON.stringify(skillList));
+}
