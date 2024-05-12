@@ -380,7 +380,8 @@ function filterBySkillFreeword(params, inList) {
 
         isMatched = false;
 
-        if (monster.skill.gameDesc.match(inSkillFreeword) != null) {
+        if (monster.skill.name.match(inSkillFreeword) != null ||
+            monster.skill.gameDesc.match(inSkillFreeword) != null) {
             isMatched =  true;
         }
         return isMatched;
