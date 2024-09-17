@@ -5,6 +5,7 @@
 const logger = require('./util/Logger');
 
 // set log level
+//----------------------------------------------------
 let execArgs = process.argv;
 if (execArgs.length > 2) {
   let logLevel = execArgs[2].toLowerCase();
@@ -20,15 +21,24 @@ if (execArgs.length > 2) {
   logger.setLevel(logger.LV_INFO);
 }
 
-//
-if (process.env.hpsnk_padmst_json_dir == undefined) {
-  console.error("  Set System Environment First.");
-  console.error("    hpsnk_padmst_json_dir");
-  process.exit(1);
-} else {  
-  console.log("  USING DATA DIR:");
-  console.log("    %s", process.env.hpsnk_padmst_json_dir);
+// check env dir
+{
+  let valEnviroument = process.env['hpsnk_padmst_json_dir'];
+  if (valEnviroument == undefined) {
+    console.error("  Set System Environment[%s] First.", "hpsnk_padmst_json_dir");
+    process.exit(1);
+  }
+  
+  const fs = require("fs");
+  if (!fs.existsSync(valEnviroument)) {
+    console.error("  Check Dir[%s] First.", valEnviroument);
+    process.exit(1);
+  }
+  
+  console.log("  USING DATA DIR:[%s]", valEnviroument);
 }
+
+
 
 const CONFIG = require('./config')
 

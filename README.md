@@ -1,5 +1,9 @@
 # PadMst(Node.js版)
 
+| 环境变量名                 | 说明        | zzz                         |
+| ---                       | ---         | ---                        |
+| hpsnk_padmst_json_dir     | 源数据目录   | PADDashFormation的本地目录  |
+
 ### 使用环境变量以及json文件
 
 * hpsnk_padmst_json_dir
