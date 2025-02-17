@@ -5,6 +5,7 @@
 const ArrayUtils = require('../util/ArrayUtils');
 
 const SkillDao = require('../dao/SkillDao');
+const SkillTagDao = require('../dao/SkillTagDao');
 
 const logger = require('../util/Logger');
 
@@ -86,4 +87,12 @@ function getSkillByCategory(nCategoryArray) {
     }
 
     return outList;
+}
+
+exports.listSkillTag = function (params) {
+    logger.trace("[SkillService.js][listSkillTag]start.");
+
+    let skillTagList = SkillTagDao.load();
+
+    return skillTagList;
 }
