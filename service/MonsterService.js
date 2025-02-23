@@ -55,12 +55,15 @@ exports.filter = function (params, monsterList) {
 
     // スキルカテゴリ
     filteredMonsterList = filterBySkillCategory(params, filteredMonsterList);
+    //logger.debug("  monster size:" + filteredMonsterList.length);
 
     // スキルターン
     filteredMonsterList = filterBySkillTurn(params, filteredMonsterList);
+    //logger.debug("  monster size:" + filteredMonsterList.length);
 
     // スキル freeword
     filteredMonsterList = filterBySkillFreeword(params, filteredMonsterList);
+    //logger.debug("  monster size:" + filteredMonsterList.length);
 
     // リーダースキル freeword
     filteredMonsterList = filterByLeaderskillFreeword(params, filteredMonsterList);
@@ -337,24 +340,31 @@ function filterBySkillCategory(params, inList) {
 
 // スキルターン
 function filterBySkillTurn(params, inList) {
+    logger.trace("[MonsterService.js][filterBySkillTurn]check.");
+
+    let inSkillTurn = params['skillturn'];
     // 検索条件に スキルターン が存在しない場合
-    if (params['skillturn'] == undefined) {
+    if (inSkillTurn == undefined) {
         return inList;
     }
 
-    logger.trace("[MonsterService.js][filterBySkillTurn]start.");
+    logger.debug("[MonsterService.js][filterBySkillTurn]start.");
+    // 
+    module.exports.fillSkillInfo(inList);
 
-
-    let outList = [];
-
-    for (let i = 0; i < inList.length; i++) {
-
-        if (inList[i]['skillTurn'] == params['skillturn']) {
-            outList.push(inList[i]);
+    let outList = inList.filter(monster => {
+        if (monster.skill == undefined) {
+            return false;
         }
-    }
 
-    logger.debug("  return path b");
+        isMatched = false;
+
+        if (monster.skill.turn == parseInt(inSkillTurn)) {
+            isMatched =  true;
+        }
+        return isMatched;
+    });
+
     return outList;
 }
 
@@ -368,7 +378,7 @@ function filterBySkillFreeword(params, inList) {
         return inList;
     }
 
-    logger.trace("[MonsterService.js][filterBySkillFreeword]start.");
+    logger.debug("[MonsterService.js][filterBySkillFreeword]start.");
     
     // 
     module.exports.fillSkillInfo(inList);
