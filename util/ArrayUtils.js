@@ -39,8 +39,9 @@ exports.countByContainsAny = function (baseArray, targetObj) {
 
 
 //--containsAll----------------------------------------
-//
-//
+// baseArray : [val1, val2, val3]
+// targetObj : [test1, [test21, test22], test23]
+// Check baseArray contains all targetObj
 //-----------------------------------------------------
 exports.containsAll = function (baseArray, targetObj) {
   let isContainsAll = false;
@@ -53,10 +54,24 @@ exports.containsAll = function (baseArray, targetObj) {
   if (Array.isArray(targetObj)) {
     let isContainsAllTarget = true;
     for (testIdx = 0; testIdx < targetObj.length; testIdx++) {
-      if (baseArray.indexOf(targetObj[testIdx]) == -1) {
-        isContainsAllTarget = false;
-        break;
+
+      //
+      let testSubObject = targetObj[testIdx];
+
+      if (Array.isArray(testSubObject)) {
+        // 子元素是数组
+        if (!exports.containsAny(baseArray, testSubObject)) {
+          isContainsAllTarget = false;
+          break;
+        }
+      } else {
+        // 子元素不是数组
+        if (baseArray.indexOf(testSubObject) == -1) {
+          isContainsAllTarget = false;
+          break;
+        }
       }
+
     }
     if (isContainsAllTarget == true) {
       isContainsAll = true;

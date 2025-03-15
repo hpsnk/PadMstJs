@@ -9,6 +9,7 @@ const SkillService = require('../service/SkillService');
 const MonsterDao = require('../dao/MonsterDao');
 const SkillDao = require('../dao/SkillDao');
 const LeaderSkillDao = require('../dao/LeaderSkillDao');
+const AwakenskillDao = require('../dao/AwakenskillDao');
 
 const logger = require('../util/Logger');
 
@@ -258,33 +259,77 @@ function filterByAwakenSkill(params, inList) {
     }
 
     let outList = [];
+    
+    // 觉醒技能Master
+    let awakenSkillMstList = AwakenskillDao.load();
+
+    // 输入的觉醒ID
+    let inputAwakenSkillArray = ArrayUtils.toNumberArray(inAwakenSkill);
+    // 等效觉醒变换后的检索觉醒ID
+    let searchAwakenSkillArray = [];
+    inputAwakenSkillArray.forEach(inputId => {
+
+        let hasEquivalentId = false;
+
+
+        awakenSkillMstList.forEach(awakenSkill => {
+            // 大觉醒的等效觉醒(小觉醒) = input觉醒Id
+            if (awakenSkill.equivalentId != undefined && inputId == awakenSkill.equivalentId ) {
+
+                hasEquivalentId = true;
+
+                // 小觉醒，大觉醒 加入检索对象
+                searchAwakenSkillArray.push([inputId, awakenSkill.awakenskillId]);
+            }
+        });
+
+        if (!hasEquivalentId) {
+            // 原始的input觉醒Id
+            searchAwakenSkillArray.push(inputId);
+        }
+    });
+    // logger.debug("  search awakenskill id:" + searchAwakenSkillArray);
+
+    // todo
 
     for (let i = 0; i < inList.length; i++) {
         let monsterAwakenSkill = inList[i].awakenskillIds;
-        let searchAwakenSkillArray = ArrayUtils.toNumberArray(inAwakenSkill);
+
+        let isTarget = false;
 
         if (params['awakenSkillSortByCount'] == 'true' && ArrayUtils.containsAll(monsterAwakenSkill, searchAwakenSkillArray)) {
             // 覚醒スキル 多い順の場合
             // and/or条件は判断なし、and条件で行う
+            
             let sortByCount = ArrayUtils.countByContainsAny(monsterAwakenSkill, searchAwakenSkillArray);
             inList[i].sortByCount = sortByCount;
             if (sortByCount > 0) {
-                outList.push(inList[i]);
+                isTarget = true;
+                // outList.push(inList[i]);
             }
 
         } else {
             // and/or条件
+            // fixme 等效觉醒加入后，and条件的判断逻辑需要修改
             if (params['awakenSkillCondAnd'] != undefined && params['awakenSkillCondAnd'] == 'true') {
                 // and条件
                 if (ArrayUtils.containsAll(monsterAwakenSkill, searchAwakenSkillArray)) {
-                    outList.push(inList[i]);
+                    isTarget = true;
+                    // outList.push(inList[i]);
                 }
             } else {
                 // or条件
                 if (ArrayUtils.containsAny(monsterAwakenSkill, searchAwakenSkillArray)) {
-                    outList.push(inList[i]);
+                    isTarget = true;
+                    // outList.push(inList[i]);
                 }
             }
+        }
+
+        // todo
+        if (isTarget) {
+            // 等效觉醒个数计算
+            outList.push(inList[i]);
         }
     }
 
