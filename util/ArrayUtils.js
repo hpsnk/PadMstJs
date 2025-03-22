@@ -102,9 +102,12 @@ exports.containsAny = function (baseArray, targetObj) {
 
   //Arrayの場合
   if (Array.isArray(targetObj)) {
-    // console.log('    base is array');
-    for (let testIdx = 0; testIdx < targetObj.length; testIdx++) {
-      if (baseArray.indexOf(targetObj[testIdx]) != -1) {
+
+    // 使用 flat(Infinity) 把 targetObj 降维成一维数组
+    let targetArray = targetObj.flat(Infinity);
+
+    for (let testIdx = 0; testIdx < targetArray.length; testIdx++) {
+      if (baseArray.indexOf(targetArray[testIdx]) != -1) {
         isContainsAny = true;
         break;
       }
