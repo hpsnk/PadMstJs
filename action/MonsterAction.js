@@ -42,11 +42,15 @@ exports.search = function (req, res) {
 
   // 検索条件に沿ってフィルターする
   let filteredMonsterList = MonsterService.filter(params, monsterList);
-  logger.debug("  monster size:" + filteredMonsterList.length);
+  logger.debug("  [filter]monster size:" + filteredMonsterList.length);
+
+  // sort
+  let sortedMonsterList = MonsterService.sort(params, filteredMonsterList);
+  logger.debug("  [sort]monster size:" + sortedMonsterList.length);
 
   // subArray
-  let objSubArray = DatatablesUtils.subArray(filteredMonsterList, params);
-  logger.debug("  monster size:" + objSubArray.data.length);
+  let objSubArray = DatatablesUtils.subArray(sortedMonsterList, params);
+  logger.debug("  [subArray]monster size:" + objSubArray.length);
 
   // fill skill
   MonsterService.fillSkillInfo(objSubArray['data']);

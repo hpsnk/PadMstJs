@@ -6,6 +6,79 @@ info:
 servers:
   - url: 'http://localhost:3000/padmst'
 paths:
+# -----------------------------------
+  /monster/list:
+    get:
+      summary: 查询Monster
+      description: Returns a list of resources filtered by attributes and type, sorted by specified criteria
+      parameters:
+        - name: mainAttr
+          in: query
+          description: 主属性
+          schema:
+            type: string
+            enum: [name, date, category]
+          required: false
+          example: name
+
+        - name: subAttr
+          in: query
+          description: 副属性
+          schema:
+            type: string
+            enum: [public, private, shared]
+          required: false
+          example: public
+
+        - name: sortBy
+          in: query
+          description: |
+            排序项目:
+            - 1 = ID
+            - 2 = 卖MP
+            - 3 = HP
+            - 4 = ATK
+            - 5 = RCV
+            - 6 = SkillTurn
+            - 7 = 稀有度
+          required: false
+          schema:
+            type: integer
+            enum: [1, 2, 3, 4, 5, 6, 7]
+
+        - name: sortKbn
+          in: query
+          description: |
+            排序方式:
+            - 1 = 升序
+            - 2 = 降序
+          required: false
+          schema:
+            type: integer
+            enum: [1, 2]
+            default: 1
+
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                - id: 1
+                  name: "Item 1"
+                  type: "public"
+                - id: 2
+                  name: "Item 2"
+                  type: "private"
+
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              example:
+                error: "Invalid parameter value"
+                message: "Supported sort values are [asc, desc]"
+# -----------------------------
   /team/list:
     post:
       summary: List Team

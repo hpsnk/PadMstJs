@@ -50,6 +50,7 @@ exports.filter = function (params, monsterList) {
 
     // 覚醒スキル
     filteredMonsterList = filterByAwakenSkill(params, filteredMonsterList);
+    logger.debug("  [filterByAwakenSkill]monster size:" + filteredMonsterList.length);
 
     // コラボ
     filteredMonsterList = filterByCollabo(params, filteredMonsterList);
@@ -72,6 +73,7 @@ exports.filter = function (params, monsterList) {
     return filteredMonsterList;
 }
 
+// sort
 exports.sort = function (params, monsterList) {
     logger.trace("[MonsterService.js][sort]start.");
 
@@ -83,7 +85,21 @@ exports.sort = function (params, monsterList) {
             return b.sortByCount - a.sortByCount;
         });
     } else {
-        logger.warn("  多い順でソートしない");
+        // logger.warn("  多い順でソートしない");
+
+        if (params['sortBy'] != undefined && params['sortBy'] == 1) {
+            
+            // ID
+            logger.warn("  sort by monsterId");
+            monsterList.sort(function (a, b) {
+                let val = a.monsterId - b.monsterId;
+                if (params['sortKbn'] == 2) {
+                    // 降序
+                    val *= -1;
+                }
+                return val
+            });
+        }
     }
 
     return monsterList;
@@ -250,13 +266,14 @@ function filterByType(params, inList) {
 }
 
 // 覚醒スキル
-function filterByAwakenSkill(params, inList) {
+function filterByAwakenSkill(params, inMonsterList) {
     let inAwakenSkill = params['awakenSkill'];
 
     // 検索条件に覚醒スキルが存在しない場合
     if (inAwakenSkill == undefined) {
-        return inList;
+        return inMonsterList;
     }
+    logger.debug("[MonsterService.js][filterByAwakenSkill]start.");
 
     let outList = [];
     
@@ -265,12 +282,13 @@ function filterByAwakenSkill(params, inList) {
 
     // 输入的觉醒ID
     let inputAwakenSkillArray = ArrayUtils.toNumberArray(inAwakenSkill);
+    // logger.debug(`  inputAwakenSkillArray =${inputAwakenSkillArray}`);
+
     // 等效觉醒变换后的检索觉醒ID
     let searchAwakenSkillArray = [];
     inputAwakenSkillArray.forEach(inputId => {
 
         let hasEquivalentId = false;
-
 
         awakenSkillMstList.forEach(awakenSkill => {
             // 大觉醒的等效觉醒(小觉醒) = input觉醒Id
@@ -288,12 +306,9 @@ function filterByAwakenSkill(params, inList) {
             searchAwakenSkillArray.push(inputId);
         }
     });
-    // logger.debug("  search awakenskill id:" + searchAwakenSkillArray);
 
-    // todo
-
-    for (let i = 0; i < inList.length; i++) {
-        let monsterAwakenSkill = inList[i].awakenskillIds;
+    for (let i = 0; i < inMonsterList.length; i++) {
+        let monsterAwakenSkill = inMonsterList[i].awakenskillIds;
 
         let isTarget = false;
 
@@ -302,36 +317,35 @@ function filterByAwakenSkill(params, inList) {
             // and/or条件は判断なし、and条件で行う
             
             let sortByCount = ArrayUtils.countByContainsAny(monsterAwakenSkill, searchAwakenSkillArray);
-            inList[i].sortByCount = sortByCount;
+            
+            inMonsterList[i].sortByCount = sortByCount;
             if (sortByCount > 0) {
                 isTarget = true;
-                // outList.push(inList[i]);
+                // todo 等效觉醒 sort用评价数计算
             }
 
         } else {
             // and/or条件
-            // fixme 等效觉醒加入后，and条件的判断逻辑需要修改
+
             if (params['awakenSkillCondAnd'] != undefined && params['awakenSkillCondAnd'] == 'true') {
                 // and条件
                 if (ArrayUtils.containsAll(monsterAwakenSkill, searchAwakenSkillArray)) {
                     isTarget = true;
-                    // outList.push(inList[i]);
                 }
             } else {
                 // or条件
                 if (ArrayUtils.containsAny(monsterAwakenSkill, searchAwakenSkillArray)) {
                     isTarget = true;
-                    // outList.push(inList[i]);
                 }
             }
         }
 
-        // todo
         if (isTarget) {
-            // 等效觉醒个数计算
-            outList.push(inList[i]);
+            outList.push(inMonsterList[i]);
         }
     }
+
+    logger.debug("[MonsterService.js][filterByAwakenSkill]end.");
 
     return outList;
 }
