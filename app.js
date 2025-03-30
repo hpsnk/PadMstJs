@@ -47,16 +47,16 @@ const app = express()
 const PORT = process.env.PORT || CONFIG.SERVER_PORT
 
 //--action
-const SkillAction = require('./action/SkillAction');
-const MonsterAction = require('./action/MonsterAction');
-const MonsterAttrAction = require('./action/MonsterAttrAction');
-const MonsterTypeAction = require('./action/MonsterTypeAction');
-const AwakenSkillAction = require('./action/AwakenskillAction');
-const TeamAction = require('./action/TeamAction');
-const CollaboAction = require('./action/CollaboAction');
-const SkillCategoryAction = require('./action/SkillCategoryAction');
+const SkillAction               = require('./action/SkillAction');
+const MonsterAction             = require('./action/MonsterAction');
+const MonsterAttrAction         = require('./action/MonsterAttrAction');
+const MonsterTypeAction         = require('./action/MonsterTypeAction');
+const AwakenSkillAction         = require('./action/AwakenskillAction');
+const TeamAction                = require('./action/TeamAction');
+const CollaboAction             = require('./action/CollaboAction');
+const SkillCategoryAction       = require('./action/SkillCategoryAction');
 const LeaderSkillCategoryAction = require('./action/LeaderSkillCategoryAction');
-const LeaderSkillAction = require('./action/LeaderSkillAction');
+const LeaderSkillAction         = require('./action/LeaderSkillAction');
 
 MonsterAction.load();
 
@@ -144,11 +144,11 @@ app.get('/padmst/skill/list', function (req, res) {
 });
 
 
-app.get('/padmst/monster/list4dt', function (req, res) {
-  logger.trace("[app.js]request monster/list4dt");
+// app.get('/padmst/monster/list4dt', function (req, res) {
+//   logger.trace("[app.js]request monster/list4dt");
 
-  MonsterAction.search4dt(req, res);
-});
+//   MonsterAction.search4dt(req, res);
+// });
 
 //--type--------------------------
 app.get('/padmst/cros/type/list', function (req, res) {

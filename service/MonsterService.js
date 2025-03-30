@@ -7,8 +7,6 @@ const ArrayUtils = require('../util/ArrayUtils');
 const SkillService = require('../service/SkillService');
 
 const MonsterDao = require('../dao/MonsterDao');
-const SkillDao = require('../dao/SkillDao');
-const LeaderSkillDao = require('../dao/LeaderSkillDao');
 const AwakenskillDao = require('../dao/AwakenskillDao');
 
 const logger = require('../util/Logger');
@@ -77,22 +75,113 @@ exports.filter = function (params, monsterList) {
 exports.sort = function (params, monsterList) {
     logger.trace("[MonsterService.js][sort]start.");
 
+    let arraySortList = monsterList.slice();
+
     // 検索条件に覚醒スキルが存在しない場合
     if (params['awakenSkill[]'] != undefined && params['awakenSkillSortByCount'] == 'true') {
         logger.warn("  多い順でソートする");
 
-        monsterList.sort(function (a, b) {
+        arraySortList.sort(function (a, b) {
             return b.sortByCount - a.sortByCount;
         });
-    } else {
+    } else if (params['sortBy'] != undefined) {
         // logger.warn("  多い順でソートしない");
 
-        if (params['sortBy'] != undefined && params['sortBy'] == 1) {
-            
-            // ID
-            logger.warn("  sort by monsterId");
-            monsterList.sort(function (a, b) {
+        // 按 monsterId 排序
+        if (params['sortBy'] == 1) {
+            arraySortList.sort(function (a, b) {
                 let val = a.monsterId - b.monsterId;
+                if (params['sortKbn'] == 2) {
+                    // 降序
+                    val *= -1;
+                }
+                return val
+            });
+        }
+
+        // 按 MP 排序
+        if (params['sortBy'] == 2) {
+            arraySortList.sort(function (a, b) {
+                let val = a.mp - b.mp;
+                if (params['sortKbn'] == 2) {
+                    // 降序
+                    val *= -1;
+                }
+                return val
+            });
+        }
+
+        // 按 HP 排序
+        if (params['sortBy'] == 3) {
+            arraySortList.sort(function (a, b) {
+                let val = a.maxHP - b.maxHP;
+                if (params['sortKbn'] == 2) {
+                    // 降序
+                    val *= -1;
+                }
+                return val
+            });
+        }
+
+        // 按 ATK 排序
+        if (params['sortBy'] == 4) {
+            arraySortList.sort(function (a, b) {
+                let val = a.maxATK - b.maxATK;
+                if (params['sortKbn'] == 2) {
+                    // 降序
+                    val *= -1;
+                }
+                return val
+            });
+        }
+
+        // 按 RCV 排序
+        if (params['sortBy'] == 5) {
+            arraySortList.sort(function (a, b) {
+                let val = a.maxRCV - b.maxRCV;
+                if (params['sortKbn'] == 2) {
+                    // 降序
+                    val *= -1;
+                }
+                return val
+            });
+        }
+
+        // 按 SkillTurn 排序
+        if (params['sortBy'] == 6) {
+            arraySortList.sort((a, b) => {
+                // 判断有效技能：skill存在且turn有定义且不等于0
+                const hasValidSkill = (monster) => 
+                    monster.skill !== undefined && 
+                    monster.skill?.turn !== undefined && 
+                    monster.skill.turn !== 0;
+            
+                const aValid = hasValidSkill(a);
+                const bValid = hasValidSkill(b);
+            
+                // 场景1: 两者都有有效技能 -> 比较turn值并应用升降序
+                if (aValid && bValid) {
+                    const aTurn = a.skill.turn;
+                    const bTurn = b.skill.turn;
+                    let comparison = aTurn - bTurn;
+                    // 仅在有效技能比较时应用升降序反转‌:ml-citation{ref="7" data="citationList"}
+                    return params['sortKbn'] == 2 ? -comparison : comparison;
+                }
+            
+                // 场景2: 仅a有有效技能 -> a排前面（不受升降序影响）
+                if (aValid) return -1;
+                // 场景3: 仅b有有效技能 -> b排前面（不受升降序影响）
+                if (bValid) return 1;
+            
+                // 场景4: 都无有效技能 -> 保持原始顺序
+                return 0;
+            });
+        }
+        
+        if (params['sortBy'] == 7) {
+            // 按 稀有度 排序
+            arraySortList.sort(function (a, b) {
+                let val = a.rare - b.rare;
                 if (params['sortKbn'] == 2) {
                     // 降序
                     val *= -1;
@@ -102,7 +191,7 @@ exports.sort = function (params, monsterList) {
         }
     }
 
-    return monsterList;
+    return arraySortList;
 }
 
 // freeword
@@ -308,7 +397,12 @@ function filterByAwakenSkill(params, inMonsterList) {
     });
 
     for (let i = 0; i < inMonsterList.length; i++) {
-        let monsterAwakenSkill = inMonsterList[i].awakenskillIds;
+        let monsterAwakenSkill = [];
+        // 觉醒、超觉醒
+        monsterAwakenSkill.push(inMonsterList[i].awakenskillIds);
+        monsterAwakenSkill.push(inMonsterList[i].superawakenskillIds);
+        // 使用 flat(Infinity) 把 targetObj 降维成一维数组
+        monsterAwakenSkill = monsterAwakenSkill.flat(Infinity);
 
         let isTarget = false;
 
@@ -409,7 +503,7 @@ function filterBySkillTurn(params, inList) {
 
     logger.debug("[MonsterService.js][filterBySkillTurn]start.");
     // 
-    module.exports.fillSkillInfo(inList);
+    // module.exports.fillSkillInfo(inList);
 
     let outList = inList.filter(monster => {
         if (monster.skill == undefined) {
@@ -440,7 +534,7 @@ function filterBySkillFreeword(params, inList) {
     logger.debug("[MonsterService.js][filterBySkillFreeword]start.");
     
     // 
-    module.exports.fillSkillInfo(inList);
+    // module.exports.fillSkillInfo(inList);
 
     let outList = inList.filter(monster => {
         if (monster.skill == undefined) {
@@ -470,7 +564,7 @@ function filterByLeaderskillFreeword(params, inList) {
     logger.trace("[MonsterService.js][filterByLeaderskillFreeword]start.");
 
     //
-    module.exports.fillLeaderSkillInfo(inList);
+    // module.exports.fillLeaderSkillInfo(inList);
 
     let outList = inList.filter(monster => {
         if (monster.leaderskill == undefined) {
@@ -532,36 +626,4 @@ exports.getTeamMonsterInfo = function (objTeamIn) {
     //assist2p
 
     return objTeamOut;
-}
-
-exports.fillSkillInfo = function (inList) {
-    logger.trace("[MonsterService.js][fillSkillInfo]start.");
-
-    inList.forEach(element => {
-        // スキルID
-        let nSkillId = element.skillId;
-        // スキル取得
-        let objSkill = SkillDao.getById(nSkillId);
-
-        if (objSkill != undefined && objSkill.initTurn != 0 && objSkill.maxLv != 0) {
-            // スキルターン算出
-            objSkill.turn = objSkill.initTurn - objSkill.maxLv + 1;
-        }
-
-        element.skill = objSkill;
-    });
-}
-
-
-exports.fillLeaderSkillInfo = function (inList) {
-    logger.trace("[MonsterService.js][fillLeaderSkillInfo]start.");
-
-    for (let i = 0; i < inList.length; i++) {
-
-        let nLeaderskillId = inList[i]['leaderskillId'];
-
-        let objLeaderSkill = LeaderSkillDao.getById(nLeaderskillId);
-
-        inList[i]['leaderskill'] = objLeaderSkill;
-    }
 }

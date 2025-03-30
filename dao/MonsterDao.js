@@ -3,9 +3,12 @@
 // cache
 //----------------------------------------------------
 
-const fs = require('fs');
-const logger = require('../util/Logger');
-const CONFIG = require('../config');
+const fs       = require('fs');
+const logger   = require('../util/Logger');
+const CONFIG   = require('../config');
+
+const SkillDao       = require('../dao/SkillDao');
+const LeaderSkillDao = require('../dao/LeaderSkillDao');
 
 let cacheList = [];
 let cacheMap = new Map();
@@ -32,24 +35,38 @@ exports.load = function () {
     let objMonster = JSON.parse(strMonster);
 
     objMonster.forEach(element => {
+        // 补充monster的skill信息
+        // スキルID
+        let nSkillId = element.skillId;
+        // スキル取得
+        let objSkill = SkillDao.getById(nSkillId);
+
+        if (objSkill != undefined) {
+            if (objSkill.initTurn > 0) {
+                // スキルターン算出
+                objSkill.turn = objSkill.initTurn - objSkill.maxLv + 1;
+            } else {
+                objSkill.turn = 0;
+            }
+            element.skill = objSkill;
+        } else {
+            element.skill = undefined;
+        }
+
+        // 补充monster的leaderskill信息
+        let objLeaderSkill = LeaderSkillDao.getById(element.leaderskillId);
+        if (objLeaderSkill != undefined) {
+            element.leaderskill = objLeaderSkill;
+        } else {
+            element.leaderskill = undefined;
+        }
+
         // listに追加
         cacheList.push(element);
 
         // mapに追加
         cacheMap.set(element.monsterId, element);
     });
-
-    // for (monsterIdx = 0; monsterIdx < objMonster.length; monsterIdx++) {
-
-    //     // unknownでない場合
-    //     // if (objMonster[monsterIdx]['unknown'] == false) {
-    //         // listに追加
-    //         cacheList.push(objMonster[monsterIdx]);
-
-    //         // mapに追加
-    //         cacheMap.set(objMonster[monsterIdx]['monsterId'], objMonster[monsterIdx]);
-    //     // }
-    // }
         
     logger.debug('  cacheList.length=' + cacheList.length);
     logger.debug('  cacheMap.size=' + cacheMap.size);
