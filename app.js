@@ -10,12 +10,25 @@ let execArgs = process.argv;
 if (execArgs.length > 2) {
   let logLevel = execArgs[2].toLowerCase();
 
-  if (logLevel === 'debug') {
-    logger.setLevel(logger.LV_DEBUG);
-  } else if (logLevel === 'trace') {
-    logger.setLevel(logger.LV_TRACE);
-  } else {
-    logger.setLevel(logger.LV_INFO);
+  switch (logLevel) {
+    case 'trace':
+      logger.setLevel(logger.LV_TRACE);
+      break;
+    case 'debug':
+      logger.setLevel(logger.LV_DEBUG);
+      break;
+    case 'info':
+      logger.setLevel(logger.LV_INFO);
+      break;  
+    case 'warn':
+      logger.setLevel(logger.LV_WARN);
+      break;  
+    case 'error':
+      logger.setLevel(logger.LV_ERROR);
+      break;
+    default:
+      logger.setLevel(logger.LV_INFO);
+      break;
   }
 } else {
   logger.setLevel(logger.LV_INFO);
@@ -86,6 +99,14 @@ app.use(function (req, res, next) {
     next();
   }
 });
+
+//--team preview-----------------------------------
+app.post('/padmst/team/preview', function (req, res) {
+  logger.trace("[app.js]team/preview");
+  // let postData = req.body
+  TeamAction.preview(req, res);
+});
+
 
 //--OK--AwakenSkill--------------------
 app.get('/padmst/awakenskill/list', function (req, res) {
